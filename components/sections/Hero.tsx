@@ -1,53 +1,90 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight, Plus } from "lucide-react";
 import { ScrollReveal } from "../ui/ScrollReveal";
-import { Badge } from "../ui/Badge";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+
+const heroImages = [
+    {
+        src: "https://images.unsplash.com/photo-1532153955177-f59af40d6472?q=80&w=1500&auto=format&fit=crop", // Flask/Science
+        alt: "Experimental Design",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1500&auto=format&fit=crop", // Portrait
+        alt: "Fashion Portrait",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1616400619175-5beda3a17896?q=80&w=1500&auto=format&fit=crop", // Bottle/Product
+        alt: "Product Design",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1500&auto=format&fit=crop", // Texture
+        alt: "Texture",
+    },
+    {
+        src: "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?q=80&w=1500&auto=format&fit=crop", // Abstract
+        alt: "Abstract Art",
+    },
+];
 
 export function Hero() {
+    const containerRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end start"],
+    });
+
+    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
+
     return (
-        <section className="relative flex flex-col items-center justify-center px-4 pt-32 pb-16 md:pt-48 md:pb-32">
-            {/* Main Content */}
-            <div className="mx-auto flex max-w-5xl flex-col items-center text-center">
+        <section ref={containerRef} className="relative min-h-[120vh] w-full pt-32 pb-20 md:pt-48">
+            <div className="mx-auto w-full max-w-[1400px] px-6 md:px-10">
 
-                <ScrollReveal width="100%" className="flex justify-center">
-                    <Badge className="mb-8">Orchid Template</Badge>
-                </ScrollReveal>
+                {/* Top Section: Heading + Link */}
+                <div className="mb-20 flex flex-col items-start justify-between gap-10 md:flex-row md:items-end">
+                    <ScrollReveal width="100%">
+                        <h1 className="max-w-4xl font-sans text-6xl font-semibold leading-[0.95] tracking-tight text-primary md:text-8xl lg:text-9xl">
+                            Creative agency <br />
+                            focused on clarity
+                        </h1>
+                    </ScrollReveal>
 
-                <ScrollReveal delay={0.1} width="100%">
-                    <h1 className="mb-8 font-serif text-5xl font-medium leading-[1.1] tracking-tight md:text-7xl lg:text-8xl">
-                        Creative agency <br /> focused on clarity
-                    </h1>
-                </ScrollReveal>
-
-                <ScrollReveal delay={0.2} width="100%" className="flex justify-center">
-                    <p className="mb-10 max-w-xl text-lg text-gray-600 md:text-xl">
-                        We build digital experiences that matter. Minimalist design for maximum impact.
-                    </p>
-                </ScrollReveal>
-
-                <ScrollReveal delay={0.3} width="100%" className="flex justify-center">
-                    <button className="group flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-white transition-transform hover:scale-105">
-                        <span className="text-sm font-medium">Start Project</span>
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </button>
-                </ScrollReveal>
-            </div>
-
-            {/* Hero Image */}
-            <ScrollReveal delay={0.4} width="100%" className="mt-20 md:mt-32">
-                <div className="relative mx-auto aspect-[3/4] w-full max-w-[800px] overflow-hidden md:aspect-[16/9]">
-                    <Image
-                        src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?q=80&w=2938&auto=format&fit=crop"
-                        alt="Minimalist Architecture"
-                        fill
-                        className="object-cover"
-                        priority
-                        sizes="(max-width: 768px) 100vw, 800px"
-                    />
+                    <ScrollReveal delay={0.2} width="auto" className="md:mb-4">
+                        <a
+                            href="#contact"
+                            className="group flex items-center gap-2 text-xl font-medium text-primary transition-colors hover:opacity-70"
+                        >
+                            Start project
+                            <ArrowUpRight className="h-6 w-6 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                        </a>
+                    </ScrollReveal>
                 </div>
-            </ScrollReveal>
+
+                {/* Carousel Section */}
+                <div className="relative -mr-[50vw] w-[150vw] md:-mr-0 md:w-full">
+                    <motion.div style={{ x }} className="flex gap-6 overflow-x-auto pb-10 scrollbar-hide md:overflow-visible md:pb-0">
+                        {heroImages.map((img, i) => (
+                            <ScrollReveal key={i} delay={0.3 + (i * 0.1)} className="shrink-0 first:pl-0">
+                                <div className="group relative aspect-[3/4] w-[80vw] overflow-hidden rounded-sm bg-gray-100 sm:w-[400px]">
+                                    <div className="absolute right-4 top-4 z-10 text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                        <Plus className="h-6 w-6" />
+                                    </div>
+                                    <Image
+                                        src={img.src}
+                                        alt={img.alt}
+                                        fill
+                                        className="object-cover transition-transform duration-700 hover:scale-105"
+                                        sizes="(max-width: 768px) 80vw, 400px"
+                                        priority={i < 2}
+                                    />
+                                </div>
+                            </ScrollReveal>
+                        ))}
+                    </motion.div>
+                </div>
+            </div>
         </section>
     );
 }

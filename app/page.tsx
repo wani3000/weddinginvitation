@@ -1,3 +1,4 @@
+import { Header } from "@/components/layout/Header";
 import { Hero } from "@/components/sections/Hero";
 import { Intro } from "@/components/sections/Intro";
 import { Stats } from "@/components/sections/Stats";
@@ -8,7 +9,8 @@ import { Footer } from "@/components/sections/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="bg-white text-primary">
+      <Header />
       <Hero />
       <Intro />
       <Stats />

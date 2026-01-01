@@ -1,23 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google"; // Import fonts
+import { Inter } from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: 'swap',
-});
+const inter = Inter({ subsets: ["latin"] });
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
-  title: "Orchid Template Clone",
-  description: "A pixel-perfect clone of the Orchid Framer template.",
+  title: "chulwan & nara - 우리의 결혼식",
+  description: "본질에 집중하는 명확하고 강력한 임팩트의 미니멀 디자인 템플릿입니다.",
 };
 
 export default function RootLayout({
@@ -29,8 +20,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body
         className={clsx(
-          inter.variable,
-          playfair.variable,
+          inter.className,
           "antialiased bg-white text-primary font-sans"
         )}
       >

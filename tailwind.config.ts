@@ -14,8 +14,8 @@ const config: Config = {
         "off-white": "#F9F9F9", // Just in case
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        serif: ["var(--font-playfair)", "serif"],
+        sans: ['"Wanted Sans Variable"', "Wanted Sans", "sans-serif"],
+        serif: ['"Wanted Sans Variable"', "Wanted Sans", "serif"],
       },
     },
   },

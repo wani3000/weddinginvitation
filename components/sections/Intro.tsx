@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ScrollReveal } from "../ui/ScrollReveal";
-import { Badge } from "../ui/Badge";
+
 
 export function Intro() {
     return (
@@ -11,19 +11,22 @@ export function Intro() {
 
                 {/* Left Content */}
                 <div className="flex-1">
-                    <ScrollReveal>
-                        <Badge className="mb-6">Who we are</Badge>
-                    </ScrollReveal>
-
                     <ScrollReveal delay={0.1}>
-                        <h2 className="font-serif text-4xl font-medium leading-[1.2] tracking-tight md:text-5xl lg:text-6xl">
-                            We help brands stand out through powerful, elegant visual storytelling.
+                        <h2 className="font-serif text-[34px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px]">
+                            2026년 5월 2일 토요일 <br />
+                            오후 12시 30분, <br />
+                            <br />
+                            서로의 풍경이 <br />
+                            되어주던 우리가 <br />
+                            이제 부부가 됩니다.
                         </h2>
                     </ScrollReveal>
 
                     <ScrollReveal delay={0.2} className="mt-8">
-                        <p className="max-w-md text-lg text-gray-600">
-                            Our approach is simple: cut through the noise. We believe in the power of whitespace, typography, and purposeful motion to create lasting impressions.
+                        <p className="max-w-md text-lg text-gray-600 whitespace-pre-line">
+                            7년이라는 긴 시간 동안 서로의 곁을 지키며 같은 곳을 바라보았습니다.{"\n\n"}
+                            이성적인 듬직함과 감성적인 따뜻함으로 서로의 부족한 점을 채워주며 닮아간 저희 두 사람,{"\n\n"}
+                            싱그러운 5월의 햇살 아래 사랑의 결실을 맺으려 합니다. 저희의 새로운 시작을 함께 축복해 주시면 감사하겠습니다.
                         </p>
                     </ScrollReveal>
                 </div>
@@ -33,8 +36,8 @@ export function Intro() {
                     <ScrollReveal delay={0.3} width="100%">
                         <div className="relative aspect-[4/5] w-full overflow-hidden bg-gray-100">
                             <Image
-                                src="https://images.unsplash.com/photo-1506057527569-3aab4a686728?q=80&w=2940&auto=format&fit=crop"
-                                alt="Minimalist plant"
+                                src="https://images.unsplash.com/photo-1532153955177-f59af40d6472?q=80&w=1500&auto=format&fit=crop"
+                                alt="미니멀한 식물"
                                 fill
                                 className="object-cover transition-transform duration-700 hover:scale-105"
                                 sizes="(max-width: 768px) 100vw, 50vw"

@@ -3,9 +3,9 @@
 import { ScrollReveal } from "../ui/ScrollReveal";
 
 const stats = [
-    { value: "100%", label: "Client Satisfaction" },
-    { value: "30+", label: "Design Awards" },
-    { value: "120", label: "Completed Projects" },
+    { value: "100%", label: "고객 만족도" },
+    { value: "30+", label: "디자인 수상" },
+    { value: "120", label: "완료된 프로젝트" },
 ];
 
 export function Stats() {

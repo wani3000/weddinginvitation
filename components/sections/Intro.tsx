@@ -13,7 +13,7 @@ export function Intro() {
                 <div className="flex-1">
                     <ScrollReveal delay={0.1}>
                         <h2 className="font-serif text-[34px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px]">
-                            2026년 5월 2일 토요일 <br />
+                            26년 5월 2일 토요일 <br />
                             오후 12시 30분, <br />
                             <br />
                             서로의 풍경이 <br />

@@ -4,12 +4,6 @@ import { useState, useEffect } from "react";
 
 import { ScrollReveal } from "../ui/ScrollReveal";
 
-const navLinks = [
-    { name: "프로젝트", href: "#" },
-    { name: "저널", href: "#" },
-    { name: "소개", href: "#" },
-    { name: "문의", href: "#" },
-];
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -35,46 +29,17 @@ export function Header() {
                 }`}
         >
             <div className="mx-auto flex w-full max-w-[1400px] items-center px-6 py-6 md:px-10">
-                {/* Left: Navigation (flex-1 ensures it takes equal space) */}
-                <div className="hidden flex-1 md:flex items-center">
-                    <nav className="flex gap-8">
-                        {navLinks.map((link, index) => (
-                            <ScrollReveal key={link.name} delay={index * 0.1}>
-                                <a
-                                    href={link.href}
-                                    className={`text-sm font-medium transition-colors ${isScrolled
-                                        ? "text-gray-600 hover:text-primary"
-                                        : "text-white/80 hover:text-white"
-                                        }`}
-                                >
-                                    {link.name}
-                                </a>
-                            </ScrollReveal>
-                        ))}
-                    </nav>
-                </div>
-
                 {/* Center: Logo */}
-                <div className="flex flex-1 justify-center">
+                <div className="flex w-full items-center justify-between">
                     <ScrollReveal>
-                        <a href="/" className="text-xl font-bold tracking-tight text-inherit whitespace-nowrap">
-                            chulwan & nara<span className="inline-block w-[1.5ch]" aria-hidden="true" />
+                        <a href="/" className="text-sm font-medium tracking-tight text-inherit whitespace-nowrap">
+                            철완&나라
                         </a>
                     </ScrollReveal>
-                </div>
-
-                {/* Right: CTA Button (flex-1 ensures it takes equal space) */}
-                <div className="hidden flex-1 items-center justify-end md:flex">
-                    <ScrollReveal delay={0.4}>
-                        <a
-                            href="#"
-                            className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${isScrolled
-                                ? "bg-primary text-white hover:bg-primary/90"
-                                : "bg-white text-primary hover:bg-white/90"
-                                }`}
-                        >
-                            시작하기
-                        </a>
+                    <ScrollReveal delay={0.1}>
+                        <div className="text-sm font-medium tracking-tight text-inherit whitespace-nowrap">
+                            5월 2일 12:30 노블발렌티 대치
+                        </div>
                     </ScrollReveal>
                 </div>
             </div>

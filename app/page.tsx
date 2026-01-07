@@ -4,6 +4,7 @@ import { Intro } from "@/components/sections/Intro";
 
 import { Gallery } from "@/components/sections/Gallery";
 import { Details } from "@/components/sections/Details";
+import { Account } from "@/components/sections/Account";
 import { RSVP } from "@/components/sections/RSVP";
 import { Footer } from "@/components/sections/Footer";
 
@@ -20,6 +21,7 @@ export default function Home() {
         <Intro />
         <Gallery />
         <Details />
+        <Account />
         <RSVP />
         <Footer />
       </div>

@@ -42,9 +42,6 @@ export function Details() {
     };
 
     const handleCopy = () => {
-        const scrollX = window.scrollX;
-        const scrollY = window.scrollY;
-
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(address).then(() => {
                 showToast();

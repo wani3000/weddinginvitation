@@ -5,7 +5,6 @@ import { Intro } from "@/components/sections/Intro";
 import { Gallery } from "@/components/sections/Gallery";
 import { Details } from "@/components/sections/Details";
 import { Account } from "@/components/sections/Account";
-import { RSVP } from "@/components/sections/RSVP";
 import { Footer } from "@/components/sections/Footer";
 
 import { VideoHero } from "@/components/sections/VideoHero";
@@ -22,7 +21,6 @@ export default function Home() {
         <Gallery />
         <Details />
         <Account />
-        <RSVP />
         <Footer />
       </div>
     </main>

@@ -1,94 +1,127 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, memo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollReveal } from "../ui/ScrollReveal";
 import { Copy, ChevronDown } from "lucide-react";
 
+// 계좌 타입 정의
+type AccountInfo = {
+    name: string;
+    account: string;
+    bank: string;
+    holder: string;
+};
+
 // 신랑측 계좌 정보
-const groomAccounts = [
+const groomAccounts: AccountInfo[] = [
     {
         name: "신랑",
-        account: "585402 01 254486",
+        account: "123456789",
         bank: "국민은행",
-        holder: "이상원"
+        holder: "박철완"
     },
     {
         name: "신랑 아버지",
-        account: "085 21 0539 170",
+        account: "987654321",
         bank: "국민은행",
-        holder: "이상우"
+        holder: "박동준"
     },
     {
         name: "신랑 어머니",
-        account: "110 362 487586",
+        account: "555666777",
         bank: "신한은행",
-        holder: "김미자"
+        holder: "조정순"
     }
 ];
 
 // 신부측 계좌 정보
-const brideAccounts = [
+const brideAccounts: AccountInfo[] = [
     {
         name: "신부",
-        account: "333310183642",
+        account: "111222333",
         bank: "카카오뱅크",
-        holder: "김수연"
+        holder: "서나라"
     },
     {
         name: "신부 아버지",
-        account: "11026132669",
+        account: "444555666",
         bank: "신한은행",
-        holder: "김승건"
+        holder: "서형교"
     },
     {
         name: "신부 어머니",
-        account: "861 21 0179 909",
+        account: "777888999",
         bank: "신한은행",
-        holder: "이영희"
+        holder: "이스잔"
     }
 ];
 
-export function Account() {
-    const [groomDropdownOpen, setGroomDropdownOpen] = useState(false);
-    const [brideDropdownOpen, setBrideDropdownOpen] = useState(false);
-    const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
-
-    const handleCopyAccount = async (account: string) => {
-        try {
-            // 계좌번호에서 공백 제거
-            const cleanAccount = account.replace(/\s/g, '');
-            await navigator.clipboard.writeText(cleanAccount);
-            setCopiedAccount(account);
-            setTimeout(() => setCopiedAccount(null), 2000);
-        } catch (err) {
-            console.error('계좌번호 복사에 실패했습니다:', err);
+// 복사 함수 (컴포넌트 외부)
+const copyToClipboard = async (text: string, onSuccess: () => void) => {
+    const cleanText = text.replace(/\s/g, '');
+    
+    // 현재 스크롤 위치 저장
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(cleanText);
+            onSuccess();
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = cleanText;
+            // 화면 밖으로 완전히 숨기고 스크롤 영향 방지
+            textArea.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;z-index:-1;";
+            textArea.setAttribute("readonly", ""); // 키보드 팝업 방지 (모바일)
+            document.body.appendChild(textArea);
+            textArea.select();
+            textArea.setSelectionRange(0, 99999);
+            const success = document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // 스크롤 위치 복원
+            window.scrollTo(scrollX, scrollY);
+            
+            if (success) onSuccess();
         }
-    };
+    } catch (err) {
+        console.error('복사 실패:', err);
+        // 에러 발생 시에도 스크롤 위치 복원
+        window.scrollTo(scrollX, scrollY);
+    }
+};
 
-    const AccountDropdown = ({
-        title,
-        accounts,
-        isOpen,
-        setIsOpen
-    }: {
-        title: string;
-        accounts: typeof groomAccounts;
-        isOpen: boolean;
-        setIsOpen: (open: boolean) => void;
-    }) => (
+// AccountDropdown을 memo로 감싸서 불필요한 리렌더링 방지
+const AccountDropdown = memo(function AccountDropdown({
+    title,
+    accounts,
+    isOpen,
+    onToggle,
+    onCopy,
+    hideBorderBottom = false
+}: {
+    title: string;
+    accounts: AccountInfo[];
+    isOpen: boolean;
+    onToggle: () => void;
+    onCopy: (account: string, holder: string) => void;
+    hideBorderBottom?: boolean;
+}) {
+    return (
         <div className="w-full bg-white">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between py-6 border-b border-gray-100 transition-colors hover:bg-gray-50/50"
+            <div 
+                onClick={onToggle}
+                className={`w-full flex items-center justify-between py-6 transition-colors hover:bg-gray-50/50 cursor-pointer ${hideBorderBottom ? '' : 'border-b border-gray-100'}`}
             >
-                <span className="text-xl md:text-2xl font-serif text-gray-900">{title}</span>
+                <span className="text-xl md:text-2xl font-sans text-gray-900">{title}</span>
                 <ChevronDown
                     className={`w-6 h-6 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
                 />
-            </button>
+            </div>
 
-            <AnimatePresence>
+            <AnimatePresence initial={false}>
                 {isOpen && (
                     <motion.div
                         initial={{ height: 0, opacity: 0 }}
@@ -99,24 +132,30 @@ export function Account() {
                     >
                         <div className="py-4 space-y-6">
                             {accounts.map((account, index) => (
-                                <div key={index} className="px-1">
+                                <div key={account.account} className="px-1">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="text-sm font-medium uppercase tracking-widest text-gray-400">
+                                        <span className="text-sm font-sans font-medium uppercase tracking-widest text-gray-900">
                                             {account.name}
                                         </span>
-                                        <button
-                                            onClick={() => handleCopyAccount(account.account)}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-all rounded-full border border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100 group"
+                                        <div
+                                            onPointerDown={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onCopy(account.account, account.holder);
+                                            }}
+                                            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-all rounded-full border border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer select-none"
                                         >
                                             <Copy className="w-3.5 h-3.5" />
-                                            <span>{copiedAccount === account.account ? "완료" : "복사"}</span>
-                                        </button>
+                                            <span className="font-sans">복사</span>
+                                        </div>
                                     </div>
                                     <div className="space-y-1.5 pl-0.5">
-                                        <div className="text-xl md:text-2xl font-mono tracking-tight text-gray-900">
+                                        <div className="text-xl md:text-2xl font-sans tracking-tight text-gray-900">
                                             {account.account}
                                         </div>
-                                        <div className="text-base text-gray-500 font-light italic">
+                                        <div className="text-base text-gray-900 font-sans font-light">
                                             {account.bank} · {account.holder}
                                         </div>
                                     </div>
@@ -131,6 +170,39 @@ export function Account() {
             </AnimatePresence>
         </div>
     );
+});
+
+export function Account() {
+    const [groomDropdownOpen, setGroomDropdownOpen] = useState(false);
+    const [brideDropdownOpen, setBrideDropdownOpen] = useState(false);
+    const toastRef = useRef<HTMLDivElement>(null);
+    const toastTextRef = useRef<HTMLSpanElement>(null);
+
+    // useCallback으로 함수 메모이제이션 - 리렌더링 시 새 함수 생성 방지
+    const handleCopy = useCallback((account: string, holder: string) => {
+        copyToClipboard(account, () => {
+            // DOM 직접 조작으로 토스트 표시 (React 상태 변경 없음 = 리렌더링 없음)
+            if (toastRef.current && toastTextRef.current) {
+                toastTextRef.current.textContent = `${holder} 님의 계좌번호가 복사되었어요`;
+                toastRef.current.style.opacity = "1";
+                toastRef.current.style.transform = "translate(-50%, 0)";
+                setTimeout(() => {
+                    if (toastRef.current) {
+                        toastRef.current.style.opacity = "0";
+                        toastRef.current.style.transform = "translate(-50%, 20px)";
+                    }
+                }, 2000);
+            }
+        });
+    }, []);
+
+    const toggleGroom = useCallback(() => {
+        setGroomDropdownOpen(prev => !prev);
+    }, []);
+
+    const toggleBride = useCallback(() => {
+        setBrideDropdownOpen(prev => !prev);
+    }, []);
 
     return (
         <section className="px-6 py-24 md:py-32 bg-white">
@@ -139,14 +211,14 @@ export function Account() {
                     <div className="flex flex-col gap-10 mb-20">
                         {/* Title & Intro Group - Matching Details.tsx style */}
                         <div className="flex flex-col gap-6">
-                            <h2 className="font-serif text-[34px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px] text-gray-900">
+                            <h2 className="font-sans text-[34px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px] text-gray-900">
                                 마음 전하실 곳
                             </h2>
                             <div className="flex flex-col gap-2">
-                                <p className="text-lg text-gray-600 leading-relaxed max-w-2xl">
+                                <p className="text-lg text-gray-600 font-sans leading-relaxed max-w-2xl">
                                     멀리서도 축하의 마음을 전하고 싶으신 분들을 위해 계좌번호를 안내드립니다.
                                 </p>
-                                <p className="text-lg text-gray-600 leading-relaxed max-w-2xl">
+                                <p className="text-lg text-gray-600 font-sans leading-relaxed max-w-2xl">
                                     소중한 축하를 보내주셔서 감사드리며, 따뜻한 마음에 깊이 감사드립니다.
                                 </p>
                             </div>
@@ -154,31 +226,42 @@ export function Account() {
                     </div>
                 </ScrollReveal>
 
-                <div className="grid md:grid-cols-2 gap-4 md:gap-8">
+                <div className="grid md:grid-cols-2 gap-0">
                     <ScrollReveal delay={0.2} width="100%">
                         <div className="border-t border-gray-900/10">
                             <AccountDropdown
                                 title="신랑측"
                                 accounts={groomAccounts}
                                 isOpen={groomDropdownOpen}
-                                setIsOpen={setGroomDropdownOpen}
+                                onToggle={toggleGroom}
+                                onCopy={handleCopy}
+                                hideBorderBottom={true}
                             />
                         </div>
                     </ScrollReveal>
 
                     <ScrollReveal delay={0.3} width="100%">
-                        <div className="border-t border-gray-900/10 md:border-t">
-                            {/* On desktop, we want both to have a top border. 
-                                On mobile, they are stacked so both should have top borders. */}
+                        <div className="border-t border-gray-900/10">
                             <AccountDropdown
                                 title="신부측"
                                 accounts={brideAccounts}
                                 isOpen={brideDropdownOpen}
-                                setIsOpen={setBrideDropdownOpen}
+                                onToggle={toggleBride}
+                                onCopy={handleCopy}
                             />
                         </div>
                     </ScrollReveal>
-                    <div className="md:hidden border-t border-gray-900/10" />
+                </div>
+            </div>
+
+            {/* 토스트 알림 - 항상 렌더링, CSS로 표시/숨김 (리렌더링 방지) */}
+            <div 
+                ref={toastRef}
+                className="fixed bottom-6 left-1/2 z-50 transition-all duration-300 pointer-events-none"
+                style={{ opacity: 0, transform: "translate(-50%, 20px)" }}
+            >
+                <div className="bg-black text-white px-6 py-3 rounded-lg shadow-lg font-sans text-sm whitespace-nowrap">
+                    <span ref={toastTextRef}>계좌번호가 복사되었어요</span>
                 </div>
             </div>
         </section>

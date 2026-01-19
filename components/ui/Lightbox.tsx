@@ -132,9 +132,9 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
                 </div>
 
                 {/* Main Image Area with Swipe */}
-                <div className="relative flex-1 flex items-center justify-center p-4 md:p-10 overflow-hidden">
+                <div className="relative flex-1 flex items-center justify-center overflow-hidden">
                     <div
-                        className="relative h-full w-full max-h-[80vh] max-w-[1200px]"
+                        className="relative h-full w-full"
                         onTouchStart={onTouchStart}
                         onTouchMove={onTouchMove}
                         onTouchEnd={onTouchEnd}
@@ -155,7 +155,8 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
                                 src={images[currentIndex].src}
                                 alt={images[currentIndex].alt}
                                 fill
-                                className="object-contain"
+                                className="object-contain md:object-contain"
+                                sizes="100vw"
                                 priority
                                 draggable={false}
                             />

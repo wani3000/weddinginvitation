@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
+import { Copy } from "lucide-react";
 import { ScrollReveal } from "../ui/ScrollReveal";
 
 const venueDetails = [
@@ -25,13 +26,28 @@ const venueDetails = [
 
 export function Details() {
     const address = "서울 강남구 영동대로 325";
-    const [copied, setCopied] = useState(false);
+    const toastRef = useRef<HTMLDivElement>(null);
+
+    const showToast = () => {
+        if (toastRef.current) {
+            toastRef.current.style.opacity = "1";
+            toastRef.current.style.transform = "translate(-50%, 0)";
+            setTimeout(() => {
+                if (toastRef.current) {
+                    toastRef.current.style.opacity = "0";
+                    toastRef.current.style.transform = "translate(-50%, 20px)";
+                }
+            }, 2000);
+        }
+    };
 
     const handleCopy = () => {
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(address).then(() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
+                showToast();
             }).catch(() => {
                 copyFallback(address);
             });
@@ -41,22 +57,24 @@ export function Details() {
     };
 
     const copyFallback = (text: string) => {
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+
         const textArea = document.createElement("textarea");
         textArea.value = text;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-9999px";
-        textArea.style.top = "0";
+        textArea.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;z-index:-1;";
+        textArea.setAttribute("readonly", "");
         document.body.appendChild(textArea);
-        textArea.focus();
         textArea.select();
+        textArea.setSelectionRange(0, 99999);
         try {
-            document.execCommand('copy');
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+            const success = document.execCommand('copy');
+            if (success) showToast();
         } catch (err) {
             console.error('Fallback copy fail', err);
         }
         document.body.removeChild(textArea);
+        window.scrollTo(scrollX, scrollY);
     };
 
     return (
@@ -76,16 +94,17 @@ export function Details() {
 
                         {/* Address & Copy + Subway */}
                         <div className="flex flex-col gap-2">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-between">
                                 <span className="text-lg text-gray-600">
                                     {address}
                                 </span>
-                                <button
+                                <div
                                     onClick={handleCopy}
-                                    className={`text-lg font-bold transition-colors ${copied ? "text-green-600" : "text-[#0089FF] hover:text-[#0066CC]"}`}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-all rounded-full border border-gray-100 bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer select-none"
                                 >
-                                    {copied ? "완료" : "복사"}
-                                </button>
+                                    <Copy className="w-3.5 h-3.5" />
+                                    <span className="font-sans">복사</span>
+                                </div>
                             </div>
 
                             <div className="flex items-center gap-3">
@@ -146,6 +165,17 @@ export function Details() {
                             </div>
                         </ScrollReveal>
                     ))}
+                </div>
+            </div>
+
+            {/* 토스트 알림 */}
+            <div 
+                ref={toastRef}
+                className="fixed bottom-6 left-1/2 z-50 transition-all duration-300 pointer-events-none"
+                style={{ opacity: 0, transform: "translate(-50%, 20px)" }}
+            >
+                <div className="bg-black text-white px-6 py-3 rounded-lg shadow-lg font-sans text-sm whitespace-nowrap">
+                    주소가 복사되었어요
                 </div>
             </div>
         </section>

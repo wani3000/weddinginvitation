@@ -23,8 +23,8 @@ export function Header() {
 
     return (
         <header
-            className={`fixed top-0 z-50 w-full transition-all duration-300 ${isScrolled
-                ? "bg-white/80 backdrop-blur-sm text-primary shadow-sm"
+            className={`fixed top-0 z-50 w-full transition-all duration-300 pt-[env(safe-area-inset-top)] ${isScrolled
+                ? "bg-white backdrop-blur-sm text-primary shadow-sm"
                 : "bg-transparent text-white"
                 }`}
         >

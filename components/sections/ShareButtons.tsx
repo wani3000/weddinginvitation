@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Script from "next/script";
-import { Share2 } from "lucide-react";
-import { ScrollReveal } from "../ui/ScrollReveal";
+import Image from "next/image";
+import { MapPin, X } from "lucide-react";
 
 declare global {
   interface Window {
@@ -22,8 +23,84 @@ const SITE_URL =
 const KAKAO_APP_KEY =
   process.env.NEXT_PUBLIC_KAKAO_APP_KEY || "f179ab3e04a4fb5bb2c3e34b89b8662c";
 
+const MAP_LINKS = [
+  {
+    name: "카카오 지도 보기",
+    icon: "/icon/kakaomap.png",
+    url: "https://map.kakao.com/link/search/노블발렌티 대치",
+  },
+  {
+    name: "네이버 지도 보기",
+    icon: "/icon/navermap.png",
+    url: "https://map.naver.com/v5/search/노블발렌티 대치",
+  },
+  {
+    name: "티맵 지도 보기",
+    icon: "/icon/tmap.png",
+    url: "tmap://route?goalname=노블발렌티 대치점&goalx=127.0633&goaly=37.5083",
+  },
+];
+
+function MapModal({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-end justify-center"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/50" />
+      <div
+        className="relative z-10 w-full max-w-lg rounded-t-2xl bg-white px-4 pb-8 pt-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-base font-semibold">지도 보기</h3>
+          <button
+            onClick={onClose}
+            className="rounded-full p-1 text-gray-400 hover:bg-gray-100"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <ul className="flex flex-col gap-2">
+          {MAP_LINKS.map((item) => (
+            <li key={item.name}>
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors hover:bg-gray-50"
+              >
+                <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                  <Image
+                    src={item.icon}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <span className="text-sm font-medium text-gray-800">
+                  {item.name}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export function ShareButtons() {
-  const [toast, setToast] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
+
   useEffect(() => {
     if (window.Kakao && !window.Kakao.isInitialized()) {
       window.Kakao.init(KAKAO_APP_KEY);
@@ -65,39 +142,27 @@ export function ShareButtons() {
     });
   };
 
-  const shareGeneral = async () => {
-    const shareData = {
-      title: "박철완 ♥ 서나라 결혼합니다",
-      text: "26년 5월 2일 토요일 오후 12시 30분\n노블발렌티 대치",
-      url: SITE_URL,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch {
-        // 사용자가 공유를 취소한 경우
-      }
-    } else {
-      await navigator.clipboard.writeText(SITE_URL);
-      setToast(true);
-      setTimeout(() => setToast(false), 2000);
-    }
-  };
-
   return (
-    <section className="bg-white px-4 py-12">
+    <>
       <Script
         src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
         strategy="afterInteractive"
         onLoad={handleKakaoLoad}
       />
-      <ScrollReveal className="mx-auto flex max-w-md flex-col items-center gap-4">
-        <p className="text-sm text-gray-500">공유하기</p>
-        <div className="flex gap-4">
+
+      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
+          <button
+            onClick={() => setMapOpen(true)}
+            className="flex items-center gap-2 rounded-full bg-gray-100 px-5 py-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200"
+          >
+            <MapPin size={18} />
+            지도
+          </button>
+
           <button
             onClick={shareKakao}
-            className="flex items-center gap-2 rounded-full bg-[#FEE500] px-6 py-3 text-sm font-medium text-[#191919] transition-opacity hover:opacity-80"
+            className="flex items-center gap-2 rounded-full bg-gray-100 px-5 py-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200"
           >
             <svg
               width="18"
@@ -111,24 +176,12 @@ export function ShareButtons() {
                 fill="#191919"
               />
             </svg>
-            카카오톡 공유
-          </button>
-
-          <button
-            onClick={shareGeneral}
-            className="flex items-center gap-2 rounded-full border border-gray-300 px-6 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <Share2 size={16} />
-            공유하기
+            카카오톡 공유하기
           </button>
         </div>
-      </ScrollReveal>
+      </div>
 
-      {toast && (
-        <div className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2 rounded-full bg-black/80 px-6 py-3 text-sm text-white shadow-lg">
-          링크가 복사되었습니다
-        </div>
-      )}
-    </section>
+      {mapOpen && <MapModal onClose={() => setMapOpen(false)} />}
+    </>
   );
 }

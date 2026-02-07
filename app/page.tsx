@@ -22,9 +22,10 @@ export default function Home() {
         <Gallery />
         <Details />
         <Account />
-        <ShareButtons />
         <Footer />
       </div>
+
+      <ShareButtons />
     </main>
   );
 }

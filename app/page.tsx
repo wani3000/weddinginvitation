@@ -6,6 +6,7 @@ import { Gallery } from "@/components/sections/Gallery";
 import { Details } from "@/components/sections/Details";
 import { Account } from "@/components/sections/Account";
 import { Footer } from "@/components/sections/Footer";
+import { ShareButtons } from "@/components/sections/ShareButtons";
 
 import { VideoHero } from "@/components/sections/VideoHero";
 
@@ -21,6 +22,7 @@ export default function Home() {
         <Gallery />
         <Details />
         <Account />
+        <ShareButtons />
         <Footer />
       </div>
     </main>

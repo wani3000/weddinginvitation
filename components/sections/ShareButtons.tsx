@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Script from "next/script";
 import { Share2 } from "lucide-react";
 import { ScrollReveal } from "../ui/ScrollReveal";
 
@@ -18,30 +19,22 @@ declare global {
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.invite-chulwan-nara.com";
-const KAKAO_APP_KEY = process.env.NEXT_PUBLIC_KAKAO_APP_KEY || "";
+const KAKAO_APP_KEY =
+  process.env.NEXT_PUBLIC_KAKAO_APP_KEY || "f179ab3e04a4fb5bb2c3e34b89b8662c";
 
 export function ShareButtons() {
   const [toast, setToast] = useState(false);
-
   useEffect(() => {
-    const initKakao = () => {
-      if (window.Kakao && !window.Kakao.isInitialized() && KAKAO_APP_KEY) {
-        window.Kakao.init(KAKAO_APP_KEY);
-      }
-    };
-
-    if (window.Kakao) {
-      initKakao();
-    } else {
-      const timer = setInterval(() => {
-        if (window.Kakao) {
-          initKakao();
-          clearInterval(timer);
-        }
-      }, 500);
-      return () => clearInterval(timer);
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_APP_KEY);
     }
   }, []);
+
+  const handleKakaoLoad = () => {
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_APP_KEY);
+    }
+  };
 
   const shareKakao = () => {
     if (!window.Kakao || !window.Kakao.isInitialized()) {
@@ -94,6 +87,11 @@ export function ShareButtons() {
 
   return (
     <section className="bg-white px-4 py-12">
+      <Script
+        src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
+        strategy="afterInteractive"
+        onLoad={handleKakaoLoad}
+      />
       <ScrollReveal className="mx-auto flex max-w-md flex-col items-center gap-4">
         <p className="text-sm text-gray-500">공유하기</p>
         <div className="flex gap-4">

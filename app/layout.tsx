@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
@@ -56,12 +55,6 @@ export default function RootLayout({
         )}
       >
         {children}
-        <Script
-          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
-          integrity="sha384-DKYJZ8NLiK8MN4/C5P2vDnuj0NRGqo0PEWMkT4HO/lbY5cCHDfKNZfWejpCgHUc"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );

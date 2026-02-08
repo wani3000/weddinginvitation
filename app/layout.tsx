@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
+import { ImageProtection } from "@/components/ImageProtection";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,12 +49,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+      </head>
       <body
         className={clsx(
           inter.className,
           "antialiased bg-white text-primary font-sans",
         )}
       >
+        <ImageProtection />
         {children}
       </body>
     </html>

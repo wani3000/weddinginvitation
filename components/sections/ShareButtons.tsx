@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Script from "next/script";
 import Image from "next/image";
-import { MapPin, X } from "lucide-react";
+import { X } from "lucide-react";
 
 declare global {
   interface Window {
@@ -100,11 +100,21 @@ function MapModal({ onClose }: { onClose: () => void }) {
 
 export function ShareButtons() {
   const [mapOpen, setMapOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (window.Kakao && !window.Kakao.isInitialized()) {
       window.Kakao.init(KAKAO_APP_KEY);
     }
+
+    const handleScroll = () => {
+      const heroHeight = window.innerHeight - 80;
+      setVisible(window.scrollY > heroHeight);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleKakaoLoad = () => {
@@ -150,14 +160,17 @@ export function ShareButtons() {
         onLoad={handleKakaoLoad}
       />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3">
+      <div
+        className={`pointer-events-none fixed bottom-[50px] left-0 right-0 z-50 transition-all duration-500 ease-out ${
+          visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+        }`}
+      >
+        <div className="pointer-events-auto mx-auto flex max-w-lg items-center justify-between px-[26px]">
           <button
             onClick={() => setMapOpen(true)}
             className="flex items-center gap-2 rounded-full bg-gray-100 px-5 py-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200"
           >
-            <MapPin size={18} />
-            지도
+            지도보기
           </button>
 
           <button

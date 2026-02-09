@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ScrollReveal } from "../ui/ScrollReveal";
 import { Lightbox } from "../ui/Lightbox";
 
@@ -30,9 +31,43 @@ export function Gallery() {
     setLightboxOpen(true);
   };
 
+  const handleGalleryClick = (e: React.MouseEvent) => {
+    // 현재 스크롤 위치 저장
+    sessionStorage.setItem("mainScrollPosition", window.scrollY.toString());
+  };
+
   return (
-    <section className="px-4 py-20 md:py-32 bg-off-white">
+    <section id="gallery" className="px-4 pt-12 pb-20 md:pt-16 md:pb-32">
       <div className="mx-auto max-w-6xl">
+        {/* Title */}
+        <ScrollReveal width="100%">
+          <Link
+            href="/gallery"
+            className="block mb-[38px] md:mb-[70px]"
+            onClick={handleGalleryClick}
+          >
+            <div className="flex items-center justify-between cursor-pointer group">
+              <h2 className="font-serif text-[28px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px] transition-colors group-hover:text-gray-700">
+                갤러리
+              </h2>
+              <svg
+                className="w-5 h-5 md:w-7 md:h-7 text-gray-400 transition-colors group-hover:text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          </Link>
+        </ScrollReveal>
+
         {/* Grid Layout with Aligned Tops */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-[2px] items-start">
           {projects.map((project, i) => (
@@ -44,19 +79,30 @@ export function Gallery() {
                 >
                   <div
                     className={`relative w-full overflow-hidden bg-gray-200 ${project.aspect || "aspect-[2/3]"}`}
+                    onContextMenu={(e) => e.preventDefault()}
                   >
                     <Image
                       src={project.src}
                       alt={project.title}
                       fill
-                      className="object-cover"
+                      className="object-cover select-none"
                       sizes="(max-width: 768px) 50vw, 33vw"
+                      draggable={false}
                     />
                   </div>
                 </div>
               </ScrollReveal>
             </div>
           ))}
+        </div>
+
+        {/* 전체보기 버튼 */}
+        <div className="mt-8 flex justify-center">
+          <Link href="/gallery" onClick={handleGalleryClick}>
+            <button className="flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800">
+              전체보기
+            </button>
+          </Link>
         </div>
       </div>
 

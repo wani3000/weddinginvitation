@@ -26,6 +26,10 @@ const heroImages = [
     src: "/img/section1/1-5.jpg",
     alt: "Wedding Photo 5",
   },
+  {
+    src: "/img/section1/1-6.jpg",
+    alt: "Wedding Photo 6",
+  },
 ];
 
 export function Hero() {
@@ -60,7 +64,7 @@ export function Hero() {
       <div className="mx-auto w-full max-w-[1400px] px-6 md:px-10">
         <div className="mb-12 flex flex-col items-start justify-between gap-8 md:mb-20 md:flex-row md:items-end">
           <ScrollReveal width="100%">
-            <h1 className="font-serif text-[34px] font-medium leading-[1.33] tracking-tight text-primary md:text-[46px] lg:text-[58px]">
+            <h1 className="font-serif text-[28px] font-medium leading-[1.33] tracking-tight text-primary md:text-[46px] lg:text-[58px]">
               7번의 봄을 지나, <br />
               평생의 계절을 <br />
               약속합니다.
@@ -92,14 +96,18 @@ export function Hero() {
                 className="shrink-0 cursor-pointer"
                 style={{ width: "80%" }}
               >
-                <div className="relative aspect-[2/3] overflow-hidden bg-gray-100">
+                <div
+                  className="relative aspect-[2/3] overflow-hidden bg-gray-100"
+                  onContextMenu={(e) => e.preventDefault()}
+                >
                   <Image
                     src={img.src}
                     alt={img.alt}
                     fill
-                    className="object-cover"
+                    className="object-cover select-none"
                     sizes="80vw"
                     priority={i === 0}
+                    draggable={false}
                   />
                 </div>
               </motion.div>

@@ -10,7 +10,7 @@ export function Intro() {
         {/* Left Content */}
         <div className="flex-1">
           <ScrollReveal delay={0.1}>
-            <h2 className="font-serif text-[34px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px]">
+            <h2 className="font-serif text-[28px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px]">
               26년 5월 2일 토요일 <br />
               오후 12시 30분, <br />
               <br />
@@ -35,13 +35,17 @@ export function Intro() {
         {/* Right Image */}
         <div className="flex-1">
           <ScrollReveal delay={0.3} width="100%">
-            <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-100">
+            <div
+              className="relative aspect-[2/3] w-full overflow-hidden bg-gray-100"
+              onContextMenu={(e) => e.preventDefault()}
+            >
               <Image
                 src="/img/section2/2-1.jpg"
                 alt="Wedding Photo"
                 fill
-                className="object-cover"
+                className="object-cover select-none"
                 sizes="(max-width: 768px) 100vw, 50vw"
+                draggable={false}
               />
             </div>
           </ScrollReveal>

@@ -85,7 +85,7 @@ function MapModal({ onClose }: { onClose: () => void }) {
                     className="object-cover"
                   />
                 </div>
-                <span className="text-sm font-medium text-gray-800">
+                <span className="text-base font-medium text-gray-800">
                   {item.name}
                 </span>
               </a>
@@ -168,14 +168,14 @@ export function ShareButtons() {
         <div className="pointer-events-auto mx-auto flex max-w-lg items-center justify-between px-[26px]">
           <button
             onClick={() => setMapOpen(true)}
-            className="flex items-center gap-2 rounded-full bg-gray-100 px-5 py-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200"
+            className="flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
           >
             지도보기
           </button>
 
           <button
             onClick={shareKakao}
-            className="flex items-center gap-2 rounded-full bg-gray-100 px-5 py-3 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200"
+            className="flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
           >
             <svg
               width="18"
@@ -186,7 +186,7 @@ export function ShareButtons() {
             >
               <path
                 d="M128 36C70.562 36 24 72.713 24 118.244c0 29.308 19.149 55.076 48.024 69.647l-10.27 37.994c-.907 3.358 2.903 6.07 5.834 4.153l44.36-30.072c5.253.744 10.633 1.134 16.052 1.134 57.438 0 104-36.713 104-82.856C232 72.713 185.438 36 128 36z"
-                fill="#191919"
+                fill="#FEE500"
               />
             </svg>
             카카오톡 공유하기

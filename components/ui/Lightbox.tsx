@@ -97,11 +97,16 @@ export function Lightbox({
     }
   };
 
-  // Prevent background scroll via touch on lightbox overlay
+  // Prevent background scroll via touch on lightbox overlay (except thumbnail area)
   useEffect(() => {
     if (!isOpen) return;
 
     const preventScroll = (e: TouchEvent) => {
+      // Allow scroll in thumbnail area
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-thumbnail-scroll]")) {
+        return;
+      }
       e.preventDefault();
     };
 
@@ -130,7 +135,7 @@ export function Lightbox({
         <div className="flex justify-end px-5 pt-5 pb-2">
           <button
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-black backdrop-blur-sm transition-colors hover:bg-black/10"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-gray-800"
           >
             <X className="h-6 w-6" />
           </button>
@@ -147,6 +152,7 @@ export function Lightbox({
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
+            onContextMenu={(e) => e.preventDefault()}
           >
             <motion.div
               key={currentIndex}
@@ -160,7 +166,7 @@ export function Lightbox({
                 src={images[currentIndex].src}
                 alt={images[currentIndex].alt}
                 fill
-                className="object-cover"
+                className="object-cover select-none"
                 sizes="100vw"
                 priority
                 draggable={false}
@@ -195,14 +201,9 @@ export function Lightbox({
 
         {/* Bottom Thumbnail Slider (iOS Style) */}
         <div className="relative left-0 right-0 z-40 h-10 md:h-12 mt-2 mb-[env(safe-area-inset-bottom)]">
-          {/* Gradient overlays */}
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-white to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-white to-transparent" />
-
           <div
             ref={thumbnailScrollRef}
-            className="flex h-full w-full items-center gap-1.5 overflow-x-auto overflow-y-hidden px-4 scrollbar-hide"
-            style={{ scrollSnapType: "x mandatory", touchAction: "pan-x" }}
+            className="flex h-full w-full items-center justify-center gap-1.5 overflow-hidden px-4"
           >
             {images.map((img, i) => (
               <button
@@ -211,6 +212,7 @@ export function Lightbox({
                   setCurrentIndex(i);
                   scrollToThumbnail(i);
                 }}
+                onContextMenu={(e) => e.preventDefault()}
                 className="relative h-full aspect-[2/3] md:aspect-square flex-shrink-0 overflow-hidden rounded-sm transition-all duration-300"
                 style={{
                   opacity: 1,
@@ -222,7 +224,8 @@ export function Lightbox({
                   src={img.src}
                   alt={img.alt}
                   fill
-                  className="object-cover"
+                  className="object-cover select-none"
+                  draggable={false}
                 />
               </button>
             ))}

@@ -51,16 +51,16 @@ export function Details() {
   };
 
   return (
-    <section className="px-4 py-20 md:py-32 bg-off-white">
-      <div className="mx-auto grid max-w-6xl gap-16 md:grid-cols-2">
+    <section className="px-4 py-20 md:px-8 md:py-28 lg:px-10 lg:py-32 bg-off-white">
+      <div className="mx-auto grid max-w-6xl gap-16 md:grid-cols-2 md:gap-12 lg:gap-16">
         <ScrollReveal>
           <div className="flex flex-col gap-10">
             {/* Title & Intro */}
             <div className="flex flex-col gap-6">
-              <h2 className="font-serif text-[28px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px]">
+              <h2 className="font-serif text-[28px] font-medium leading-[1.33] tracking-tight md:text-[38px] lg:text-[46px]">
                 노블발렌티 대치
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
+              <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-xl">
                 저희가 약속을 맺는 &apos;노블발렌티 대치&apos;는 단독홀로
                 운영되어, 복잡함 없이 오직 저희 하객분들만 여유롭게 모실 수 있는
                 공간입니다. 오셔서 맛있는 식사와 함께 자리를 빛내주시면

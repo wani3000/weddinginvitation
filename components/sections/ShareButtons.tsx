@@ -160,8 +160,9 @@ export function ShareButtons() {
         onLoad={handleKakaoLoad}
       />
 
+      {/* 모바일에서만 보이는 플로팅 버튼 */}
       <div
-        className={`pointer-events-none fixed bottom-[50px] left-0 right-0 z-50 transition-all duration-500 ease-out ${
+        className={`md:hidden pointer-events-none fixed bottom-[50px] left-0 right-0 z-50 transition-all duration-500 ease-out ${
           visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
         }`}
       >

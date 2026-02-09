@@ -23,13 +23,74 @@ export function Lightbox({
   const thumbnailScrollRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [showLeftGradient, setShowLeftGradient] = useState(false);
+  const [showRightGradient, setShowRightGradient] = useState(false);
+  const [fixedViewportHeight, setFixedViewportHeight] = useState(0);
 
-  // Update currentIndex when initialIndex changes (when opening lightbox)
+  // Update currentIndex and fix viewport height when opening lightbox
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(initialIndex);
+      // 라이트박스가 열릴 때의 뷰포트 높이를 고정
+      setFixedViewportHeight(window.innerHeight);
+      // body 스크롤 잠금 및 위치 고정
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.top = "0";
+    } else {
+      // 라이트박스가 닫힐 때 body 복원
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
     }
   }, [isOpen, initialIndex]);
+
+  // Check if gradients should be shown based on thumbnail overflow
+  useEffect(() => {
+    const checkGradients = () => {
+      const container = thumbnailScrollRef.current;
+      if (!container) return;
+
+      // Calculate total width of all thumbnails
+      const thumbnailWidth =
+        container.children.length > 0
+          ? (container.children[0] as HTMLElement).offsetWidth
+          : 0;
+      const gap = 6; // 1.5 * 4px (gap-1.5)
+      const totalThumbnailsWidth = (thumbnailWidth + gap) * images.length - gap;
+      const containerWidth = container.clientWidth;
+
+      // Show gradients only if content overflows (thumbnails don't all fit)
+      const hasOverflow = totalThumbnailsWidth > containerWidth;
+
+      if (!hasOverflow) {
+        setShowLeftGradient(false);
+        setShowRightGradient(false);
+        return;
+      }
+
+      // If there's overflow, check scroll position
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      setShowLeftGradient(scrollLeft > 10);
+      setShowRightGradient(scrollLeft < scrollWidth - clientWidth - 10);
+    };
+
+    const container = thumbnailScrollRef.current;
+    if (container && isOpen) {
+      // Small delay to ensure DOM is ready
+      setTimeout(checkGradients, 100);
+
+      container.addEventListener("scroll", checkGradients);
+      window.addEventListener("resize", checkGradients);
+
+      return () => {
+        container.removeEventListener("scroll", checkGradients);
+        window.removeEventListener("resize", checkGradients);
+      };
+    }
+  }, [isOpen, currentIndex, images.length]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -129,10 +190,17 @@ export function Lightbox({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex flex-col bg-white"
+        className="fixed inset-0 z-[100] bg-white"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        {/* Close Button */}
-        <div className="flex justify-end px-5 pt-5 pb-2">
+        {/* Close Button - Fixed height: 20px top + 40px button + 8px bottom = 68px */}
+        <div
+          className="flex justify-end px-5"
+          style={{ paddingTop: "20px", paddingBottom: "8px", flexShrink: 0 }}
+        >
           <button
             onClick={onClose}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-gray-800"
@@ -141,14 +209,18 @@ export function Lightbox({
           </button>
         </div>
 
-        {/* Main Image Area with Swipe */}
+        {/* Main Image Area with Swipe - Fixed calculated height */}
         <div
-          className="relative flex items-center justify-center overflow-hidden px-5 flex-shrink-0"
-          style={{ flexBasis: "auto", maxHeight: "calc(100vh - 6rem)" }}
+          className="relative flex justify-center overflow-hidden px-5"
+          style={{
+            height: fixedViewportHeight
+              ? `${fixedViewportHeight - 68 - 64}px`
+              : "calc(100vh - 68px - 64px - env(safe-area-inset-bottom))",
+            flexShrink: 0,
+          }}
         >
           <div
-            className="relative w-full"
-            style={{ aspectRatio: "2/3" }}
+            className="relative w-full h-full max-w-2xl"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -166,8 +238,8 @@ export function Lightbox({
                 src={images[currentIndex].src}
                 alt={images[currentIndex].alt}
                 fill
-                className="object-cover select-none"
-                sizes="100vw"
+                className="object-contain select-none"
+                sizes="(max-width: 768px) 100vw, 672px"
                 priority
                 draggable={false}
               />
@@ -199,8 +271,26 @@ export function Lightbox({
           />
         </div>
 
-        {/* Bottom Thumbnail Slider (iOS Style) */}
-        <div className="relative left-0 right-0 z-40 h-10 md:h-12 mt-2 mb-[env(safe-area-inset-bottom)]">
+        {/* Bottom Thumbnail Slider (iOS Style) - Fixed height: 4px top + 40px thumbnail + 20px bottom + safe area */}
+        <div
+          className="relative z-40"
+          style={{
+            paddingTop: "4px",
+            paddingBottom: "calc(20px + env(safe-area-inset-bottom))",
+            flexShrink: 0,
+            height: "calc(64px + env(safe-area-inset-bottom))",
+          }}
+        >
+          {/* Left gradient overlay */}
+          {showLeftGradient && (
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none transition-opacity duration-300" />
+          )}
+
+          {/* Right gradient overlay */}
+          {showRightGradient && (
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none transition-opacity duration-300" />
+          )}
+
           <div
             ref={thumbnailScrollRef}
             className="flex h-full w-full items-center justify-center gap-1.5 overflow-hidden px-4"
@@ -216,7 +306,7 @@ export function Lightbox({
                 className="relative h-full aspect-[2/3] md:aspect-square flex-shrink-0 overflow-hidden rounded-sm transition-all duration-300"
                 style={{
                   opacity: 1,
-                  transform: i === currentIndex ? "scale(1.1)" : "scale(0.95)",
+                  transform: i === currentIndex ? "scale(1.2)" : "scale(0.95)",
                   scrollSnapAlign: "center",
                 }}
               >

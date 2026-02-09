@@ -7,15 +7,37 @@ export function VideoHero() {
   const [viewportHeight, setViewportHeight] = useState(0);
 
   useEffect(() => {
-    // 초기 뷰포트 높이를 저장하고 고정
-    const initialHeight = window.innerHeight;
-    setViewportHeight(initialHeight);
+    // 초기 뷰포트 높이를 저장하고 화면 크기에 따라 조정
+    const setHeight = () => {
+      const initialHeight = window.innerHeight;
+      const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+      const isDesktop = window.innerWidth >= 1024;
 
-    // CSS 변수로도 설정 (추가 보험)
-    document.documentElement.style.setProperty(
-      "--initial-vh",
-      `${initialHeight}px`,
-    );
+      let adjustedHeight = initialHeight;
+      if (isDesktop) {
+        adjustedHeight = initialHeight * 0.7; // 데스크탑: 70vh
+      } else if (isTablet) {
+        adjustedHeight = initialHeight * 0.8; // 태블릿: 80vh
+      }
+
+      setViewportHeight(adjustedHeight);
+      document.documentElement.style.setProperty(
+        "--initial-vh",
+        `${adjustedHeight}px`,
+      );
+    };
+
+    // 초기 설정
+    setHeight();
+
+    // 리사이즈 및 오리엔테이션 변경 시 재계산
+    window.addEventListener("resize", setHeight);
+    window.addEventListener("orientationchange", setHeight);
+
+    return () => {
+      window.removeEventListener("resize", setHeight);
+      window.removeEventListener("orientationchange", setHeight);
+    };
   }, []);
 
   return (
@@ -43,7 +65,7 @@ export function VideoHero() {
       </div>
 
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-white">
-        <div className="relative h-[218px] w-[218px] md:h-[282px] md:w-[282px]">
+        <div className="relative h-[218px] w-[218px] md:h-[240px] md:w-[240px] lg:h-[280px] lg:w-[280px]">
           <Image
             src="/icon/hero.png"
             alt="Hero Logo"

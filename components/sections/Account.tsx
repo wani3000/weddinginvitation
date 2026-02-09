@@ -65,20 +65,18 @@ const AccountDropdown = memo(function AccountDropdown({
   isOpen,
   onToggle,
   onCopy,
-  hideBorderBottom = false,
 }: {
   title: string;
   accounts: AccountInfo[];
   isOpen: boolean;
   onToggle: () => void;
   onCopy: (account: string, holder: string) => void;
-  hideBorderBottom?: boolean;
 }) {
   return (
     <div className="w-full bg-white">
       <div
         onClick={onToggle}
-        className={`w-full flex items-center justify-between py-6 transition-colors hover:bg-gray-50/50 cursor-pointer ${hideBorderBottom ? "" : "border-b border-gray-100"}`}
+        className={`w-full flex items-center justify-between py-6 transition-colors hover:bg-gray-50/50 cursor-pointer ${isOpen ? "md:border-b md:border-gray-100" : ""}`}
       >
         <span className="text-xl md:text-2xl font-sans text-gray-900">
           {title}
@@ -172,21 +170,21 @@ export function Account() {
   }, []);
 
   return (
-    <section className="px-6 py-24 md:py-32 bg-white">
+    <section className="px-4 py-20 md:px-8 md:py-28 lg:px-10 lg:py-32 bg-white">
       <div className="mx-auto max-w-6xl">
         <ScrollReveal width="100%">
-          <div className="flex flex-col gap-10 mb-20">
+          <div className="flex flex-col gap-10 mb-16 md:mb-20">
             {/* Title & Intro Group - Matching Details.tsx style */}
             <div className="flex flex-col gap-6">
-              <h2 className="font-sans text-[28px] font-medium leading-[1.33] tracking-tight md:text-[46px] lg:text-[58px] text-gray-900">
+              <h2 className="font-sans text-[28px] font-medium leading-[1.33] tracking-tight md:text-[38px] lg:text-[46px] text-gray-900">
                 마음 전하실 곳
               </h2>
               <div className="flex flex-col gap-2">
-                <p className="text-lg text-gray-600 font-sans leading-relaxed max-w-2xl">
+                <p className="text-base md:text-lg text-gray-600 font-sans leading-relaxed max-w-2xl">
                   멀리서도 축하의 마음을 전하고 싶으신 분들을 위해 계좌번호를
                   안내드립니다.
                 </p>
-                <p className="text-lg text-gray-600 font-sans leading-relaxed max-w-2xl">
+                <p className="text-base md:text-lg text-gray-600 font-sans leading-relaxed max-w-2xl">
                   소중한 축하를 보내주셔서 감사드리며, 따뜻한 마음에 깊이
                   감사드립니다.
                 </p>
@@ -195,7 +193,7 @@ export function Account() {
           </div>
         </ScrollReveal>
 
-        <div className="grid md:grid-cols-2 gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8">
           <ScrollReveal delay={0.2} width="100%">
             <div className="border-t border-gray-900/10">
               <AccountDropdown
@@ -204,7 +202,6 @@ export function Account() {
                 isOpen={groomDropdownOpen}
                 onToggle={toggleGroom}
                 onCopy={handleCopy}
-                hideBorderBottom={true}
               />
             </div>
           </ScrollReveal>

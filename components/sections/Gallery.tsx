@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { ScrollReveal } from "../ui/ScrollReveal";
 import { allGalleryImages } from "@/lib/constants/gallery";
 
@@ -52,30 +53,12 @@ export function Gallery() {
         {/* Grid Layout with Aligned Tops */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-[2px] md:gap-1 items-start">
           {projects.map((project, i) => (
-            <div key={i}>
-              <ScrollReveal delay={i * 0.1} width="100%">
-                <Link
-                  href={`/lightbox?index=${i}`}
-                  onClick={handleGalleryClick}
-                >
-                  <div className="group cursor-pointer">
-                    <div
-                      className={`relative w-full overflow-hidden bg-gray-200 md:rounded-sm ${project.aspect || "aspect-[2/3]"}`}
-                      onContextMenu={(e) => e.preventDefault()}
-                    >
-                      <Image
-                        src={project.src}
-                        alt={project.title}
-                        fill
-                        className="object-cover select-none transition-transform duration-300 md:group-hover:scale-105"
-                        sizes="(max-width: 768px) 50vw, 33vw"
-                        draggable={false}
-                      />
-                    </div>
-                  </div>
-                </Link>
-              </ScrollReveal>
-            </div>
+            <GalleryItem
+              key={i}
+              project={project}
+              index={i}
+              onGalleryClick={handleGalleryClick}
+            />
           ))}
         </div>
 
@@ -89,5 +72,50 @@ export function Gallery() {
         </div>
       </div>
     </section>
+  );
+}
+
+function GalleryItem({
+  project,
+  index,
+  onGalleryClick,
+}: {
+  project: (typeof allGalleryImages)[number];
+  index: number;
+  onGalleryClick: () => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+
+  return (
+    <div>
+      <ScrollReveal delay={index * 0.1} width="100%">
+        <Link href={`/lightbox?index=${index}`} onClick={onGalleryClick}>
+          <div className="group cursor-pointer">
+            <div
+              className={`relative w-full overflow-hidden bg-gray-200 md:rounded-sm ${project.aspect || "aspect-[2/3]"}`}
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              {/* Skeleton */}
+              {!loaded && (
+                <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]" />
+              )}
+              {!error && (
+                <Image
+                  src={project.src}
+                  alt={project.title}
+                  fill
+                  className={`object-cover select-none transition-all duration-500 md:group-hover:scale-105 ${loaded ? "opacity-100" : "opacity-0"}`}
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  draggable={false}
+                  onLoad={() => setLoaded(true)}
+                  onError={() => setError(true)}
+                />
+              )}
+            </div>
+          </div>
+        </Link>
+      </ScrollReveal>
+    </div>
   );
 }

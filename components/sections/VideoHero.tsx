@@ -82,12 +82,7 @@ export function VideoHero() {
       const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
       const isDesktop = window.innerWidth >= 1024;
 
-      let adjustedHeight = initialHeight;
-      if (isDesktop) {
-        adjustedHeight = initialHeight * 0.7; // 데스크탑: 70vh
-      } else if (isTablet) {
-        adjustedHeight = initialHeight * 0.8; // 태블릿: 80vh
-      }
+      const adjustedHeight = initialHeight;
 
       setViewportHeight(adjustedHeight);
       setVideoSrc(

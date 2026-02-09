@@ -30,6 +30,7 @@ const SVG_HTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 329.01 20
 
 export function VideoHero() {
   const [viewportHeight, setViewportHeight] = useState(0);
+  const [videoSrc, setVideoSrc] = useState("/video/main.mp4");
   const svgRef = useRef<HTMLDivElement>(null);
 
   const animateSvg = useCallback(() => {
@@ -89,6 +90,9 @@ export function VideoHero() {
       }
 
       setViewportHeight(adjustedHeight);
+      setVideoSrc(
+        isTablet || isDesktop ? "/video/main for web.mp4" : "/video/main.mp4",
+      );
       document.documentElement.style.setProperty(
         "--initial-vh",
         `${adjustedHeight}px`,
@@ -126,6 +130,7 @@ export function VideoHero() {
       {/* Video Background */}
       <div className="absolute inset-0">
         <video
+          key={videoSrc}
           autoPlay
           muted
           loop
@@ -133,8 +138,7 @@ export function VideoHero() {
           poster="https://images.unsplash.com/photo-1542352841-526487e4975f?q=80&w=1887&auto=format&fit=crop"
           className="h-full w-full object-cover"
         >
-          <source src="/video/main.mp4" type="video/mp4" />
-          <source src="/video/main.mov" type="video/quicktime" />
+          <source src={videoSrc} type="video/mp4" />
         </video>
       </div>
 

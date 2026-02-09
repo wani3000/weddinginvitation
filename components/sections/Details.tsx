@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { Copy } from "lucide-react";
 import { ScrollReveal } from "../ui/ScrollReveal";
+import { copyToClipboard } from "@/lib/utils/clipboard";
 
 const venueDetails = [
   {
@@ -46,40 +47,7 @@ export function Details() {
   };
 
   const handleCopy = () => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard
-        .writeText(address)
-        .then(() => {
-          showToast();
-        })
-        .catch(() => {
-          copyFallback(address);
-        });
-    } else {
-      copyFallback(address);
-    }
-  };
-
-  const copyFallback = (text: string) => {
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.cssText =
-      "position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;z-index:-1;";
-    textArea.setAttribute("readonly", "");
-    document.body.appendChild(textArea);
-    textArea.select();
-    textArea.setSelectionRange(0, 99999);
-    try {
-      const success = document.execCommand("copy");
-      if (success) showToast();
-    } catch (err) {
-      console.error("Fallback copy fail", err);
-    }
-    document.body.removeChild(textArea);
-    window.scrollTo(scrollX, scrollY);
+    copyToClipboard(address, showToast);
   };
 
   return (

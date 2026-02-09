@@ -5,19 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ScrollReveal } from "../ui/ScrollReveal";
 import { Lightbox } from "../ui/Lightbox";
-
-// 전체 24장의 갤러리 이미지
-const allGalleryImages = Array.from({ length: 24 }, (_, i) => {
-  const num = String(i + 1).padStart(2, "0");
-  const ext = i === 7 || i === 10 ? "png" : "jpg"; // gallery_08.png, gallery_11.png
-  return {
-    title: `Wedding Gallery ${num}`,
-    category: "Wedding",
-    src: `/img/gallery/gallery_${num}.${ext}`,
-    alt: `Wedding Photo ${num}`,
-    aspect: "aspect-[2/3]",
-  };
-});
+import { allGalleryImages } from "@/lib/constants/gallery";
 
 // 메인에 표시할 6장 (처음 6장)
 const projects = allGalleryImages.slice(0, 6);

@@ -1,37 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Lightbox } from "@/components/ui/Lightbox";
+import { allGalleryImages } from "@/lib/constants/gallery";
 
-// 전체 24장의 갤러리 이미지
-const allGalleryImages = Array.from({ length: 24 }, (_, i) => {
-  const num = String(i + 1).padStart(2, "0");
-  const ext = i === 7 || i === 10 ? "png" : "jpg";
-  return {
-    title: `Wedding Gallery ${num}`,
-    category: "Wedding",
-    src: `/img/gallery/gallery_${num}.${ext}`,
-    alt: `Wedding Photo ${num}`,
-    aspect: "aspect-[2/3]",
-  };
-});
+const SCROLL_RESTORE_DELAY = 100;
 
 export default function GalleryPage() {
   const router = useRouter();
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  // 메인 페이지에서 스크롤 위치 저장
-  useEffect(() => {
-    const savedPosition = sessionStorage.getItem("mainScrollPosition");
-    if (savedPosition) {
-      setScrollPosition(parseInt(savedPosition, 10));
-    }
-  }, []);
 
   const openLightbox = (index: number) => {
     setCurrentIndex(index);
@@ -39,14 +20,16 @@ export default function GalleryPage() {
   };
 
   const handleBack = () => {
-    // 메인 페이지로 돌아가기
     router.push("/#gallery");
-    // 스크롤 위치 복원은 메인 페이지에서 처리
     setTimeout(() => {
-      if (scrollPosition > 0) {
-        window.scrollTo({ top: scrollPosition, behavior: "instant" });
+      const savedPosition = sessionStorage.getItem("mainScrollPosition");
+      if (savedPosition) {
+        window.scrollTo({
+          top: parseInt(savedPosition, 10),
+          behavior: "instant",
+        });
       }
-    }, 100);
+    }, SCROLL_RESTORE_DELAY);
   };
 
   return (
@@ -69,6 +52,7 @@ export default function GalleryPage() {
                       src={image.src}
                       alt={image.title}
                       fill
+                      loading="lazy"
                       className="object-cover select-none transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 768px) 50vw, 33vw"
                       draggable={false}

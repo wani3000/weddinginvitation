@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { ScrollReveal } from "../ui/ScrollReveal";
-import { useRef, useState } from "react";
-import { motion, PanInfo } from "framer-motion";
+import { useState } from "react";
+import { motion, type PanHandler } from "framer-motion";
 
 const heroImages = [
   {
@@ -33,7 +33,6 @@ const heroImages = [
 ];
 
 export function Hero() {
-  const containerRef = useRef<HTMLElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const totalImages = heroImages.length;
@@ -46,7 +45,7 @@ export function Hero() {
     setCurrentIndex((prev) => (prev - 1 + totalImages) % totalImages);
   };
 
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
+  const handleDragEnd: PanHandler = (_, info) => {
     const threshold = 50;
     if (info.offset.x < -threshold) {
       nextImage();

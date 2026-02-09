@@ -55,10 +55,7 @@ export function Hero() {
   };
 
   return (
-    <section
-      ref={containerRef}
-      className="relative w-full pt-24 pb-20 md:pt-48"
-    >
+    <section className="relative w-full pt-24 pb-20 md:pt-48">
       {/* 타이틀 영역 - 패딩 있음 */}
       <div className="mx-auto w-full max-w-[1400px] px-6 md:px-10">
         <div className="mb-12 flex flex-col items-start justify-between gap-8 md:mb-20 md:flex-row md:items-end">

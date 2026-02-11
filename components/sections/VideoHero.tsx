@@ -5,7 +5,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 const SVG_HTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 329.01 209.67" style="width:100%;height:auto;">
   <defs>
     <style>
-      .st0, .st1 { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+      .st0, .st1 { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
       .st0 { stroke: #fefefe; }
       .st1 { stroke: #fff; }
     </style>

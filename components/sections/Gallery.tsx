@@ -33,7 +33,7 @@ export function Gallery() {
                 갤러리
               </h2>
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-normal text-black">
+                <span className="text-[17px] font-semibold text-gray-600">
                   갤러리 더보기
                 </span>
                 <svg

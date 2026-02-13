@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useCallback, memo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScrollReveal } from "../ui/ScrollReveal";
@@ -14,24 +15,36 @@ type AccountInfo = {
   holder: string;
 };
 
+function getBankIconSrc(bank: string) {
+  if (bank.includes("카카오")) return "/icon/bank/kakaobank.png";
+  if (bank.includes("기업")) return "/icon/bank/ibk.png";
+  if (bank.includes("하나")) return "/icon/bank/hana.png";
+  if (bank.includes("국민")) return "/icon/bank/kookmin.png";
+  if (bank.includes("농협")) return "/icon/bank/nh.png";
+  if (bank.includes("신한")) return "/icon/bank/shinhan.png";
+  if (bank.includes("우리")) return "/icon/bank/woori.png";
+  if (bank.includes("토스")) return "/icon/bank/toss.png";
+  return null;
+}
+
 // 신랑측 계좌 정보
 const groomAccounts: AccountInfo[] = [
   {
     name: "신랑",
-    account: "123456789",
-    bank: "국민은행",
+    account: "1002048437235",
+    bank: "우리은행",
     holder: "박철완",
   },
   {
     name: "신랑 아버지",
-    account: "987654321",
-    bank: "국민은행",
+    account: "49104036401012",
+    bank: "기업은행",
     holder: "박동준",
   },
   {
     name: "신랑 어머니",
-    account: "555666777",
-    bank: "신한은행",
+    account: "07209616212601",
+    bank: "우리은행",
     holder: "조정순",
   },
 ];
@@ -40,19 +53,19 @@ const groomAccounts: AccountInfo[] = [
 const brideAccounts: AccountInfo[] = [
   {
     name: "신부",
-    account: "111222333",
-    bank: "카카오뱅크",
+    account: "3022100991461",
+    bank: "농협은행",
     holder: "서나라",
   },
   {
     name: "신부 아버지",
-    account: "444555666",
+    account: "-",
     bank: "신한은행",
     holder: "서형교",
   },
   {
     name: "신부 어머니",
-    account: "777888999",
+    account: "-",
     bank: "신한은행",
     holder: "이스잔",
   },
@@ -96,39 +109,57 @@ const AccountDropdown = memo(function AccountDropdown({
             className="overflow-hidden"
           >
             <div className="py-4 space-y-6">
-              {accounts.map((account, index) => (
-                <div key={account.account} className="px-1">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-sans font-semibold uppercase tracking-widest text-gray-900">
-                      {account.name}
-                    </span>
-                    <div
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onCopy(account.account, account.holder);
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-all rounded-full bg-black text-white hover:bg-gray-800 cursor-pointer select-none"
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                      <span className="font-sans">복사</span>
+              {accounts.map((account, index) => {
+                const bankIconSrc = getBankIconSrc(account.bank);
+
+                return (
+                  <div key={account.account} className="px-1">
+                    <div className="mb-3">
+                      <span className="text-sm font-sans font-semibold uppercase tracking-widest text-gray-900">
+                        {account.name}
+                      </span>
                     </div>
+                    <div className="flex items-center justify-between gap-3 pl-0.5">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-gray-100">
+                          {bankIconSrc && (
+                            <Image
+                              src={bankIconSrc}
+                              alt={account.bank}
+                              fill
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="space-y-1.5 min-w-0">
+                          <div className="text-xl md:text-2xl font-sans tracking-tight text-gray-900 break-all">
+                            {account.account}
+                          </div>
+                          <div className="text-base text-gray-900 font-sans font-light">
+                            {account.bank} · {account.holder}
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        onPointerDown={(e) => {
+                          e.stopPropagation();
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onCopy(account.account, account.holder);
+                        }}
+                        className="flex shrink-0 items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-all rounded-full bg-black text-white hover:bg-gray-800 cursor-pointer select-none"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        <span className="font-sans">복사</span>
+                      </div>
+                    </div>
+                    {index !== accounts.length - 1 && (
+                      <div className="mt-6 border-t border-gray-50" />
+                    )}
                   </div>
-                  <div className="space-y-1.5 pl-0.5">
-                    <div className="text-xl md:text-2xl font-sans tracking-tight text-gray-900">
-                      {account.account}
-                    </div>
-                    <div className="text-base text-gray-900 font-sans font-light">
-                      {account.bank} · {account.holder}
-                    </div>
-                  </div>
-                  {index !== accounts.length - 1 && (
-                    <div className="mt-6 border-t border-gray-50" />
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
         )}

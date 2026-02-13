@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DEFAULT_INVITATIONS, STORAGE_KEY } from "@/lib/admin/localStore";
 import { ManagedInvitation } from "@/lib/admin/types";
 
@@ -33,45 +33,22 @@ function loadInvitations(): ManagedInvitation[] {
 }
 
 export function InvitationEditor({ title, description, backHref, backLabel }: InvitationEditorProps) {
-  const [selectedId, setSelectedId] = useState("sample-001");
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const url = new URL(window.location.href);
-    const id = url.searchParams.get("id");
-    if (id) {
-      setSelectedId(id);
-    }
-  }, []);
-
   const [all, setAll] = useState<ManagedInvitation[]>(() => loadInvitations());
-  const current = useMemo(
-    () => all.find((item) => item.id === selectedId) ?? all[0] ?? DEFAULT_INVITATIONS[0],
-    [all, selectedId],
-  );
-
+  const current = useMemo(() => all[0] ?? DEFAULT_INVITATIONS[0], [all]);
   const [form, setForm] = useState<ManagedInvitation>(current);
-
-  useEffect(() => {
-    setForm(current);
-  }, [current]);
 
   const updateField = <K extends keyof ManagedInvitation>(key: K, value: ManagedInvitation[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const save = () => {
-    const next = all.map((item) =>
-      item.id === form.id
-        ? {
-            ...form,
-            updatedAt: new Date().toISOString(),
-          }
-        : item,
-    );
+    const next: ManagedInvitation[] = [
+      {
+        ...form,
+        publicPath: "/",
+        updatedAt: new Date().toISOString(),
+      },
+    ];
 
     setAll(next);
     if (typeof window !== "undefined") {
@@ -106,15 +83,6 @@ export function InvitationEditor({ title, description, backHref, backLabel }: In
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <label className="text-sm text-neutral-700">
-              링크 ID
-              <input
-                value={form.id}
-                disabled
-                className="mt-2 w-full rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm"
-              />
-            </label>
-
             <label className="text-sm text-neutral-700">
               청첩장 제목
               <input
@@ -156,15 +124,6 @@ export function InvitationEditor({ title, description, backHref, backLabel }: In
               <input
                 value={form.venue}
                 onChange={(e) => updateField("venue", e.target.value)}
-                className="mt-2 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
-              />
-            </label>
-
-            <label className="text-sm text-neutral-700 md:col-span-2">
-              공개 링크 경로
-              <input
-                value={form.publicPath}
-                onChange={(e) => updateField("publicPath", e.target.value)}
                 className="mt-2 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
               />
             </label>

@@ -32,20 +32,25 @@ export function Gallery() {
               <h2 className="font-serif text-[28px] font-medium leading-[1.33] tracking-tight md:text-[38px] lg:text-[46px] transition-colors group-hover:text-gray-700">
                 갤러리
               </h2>
-              <svg
-                className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-gray-400 transition-colors group-hover:text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-normal text-black">
+                  갤러리 더보기
+                </span>
+                <svg
+                  className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-black"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
             </div>
           </Link>
         </ScrollReveal>
@@ -62,11 +67,11 @@ export function Gallery() {
           ))}
         </div>
 
-        {/* 전체보기 버튼 */}
+        {/* 갤러리 더보기 버튼 */}
         <div className="mt-8 md:mt-10 flex justify-center">
           <Link href="/gallery" onClick={handleGalleryClick}>
             <button className="flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800">
-              전체보기
+              갤러리 더보기
             </button>
           </Link>
         </div>

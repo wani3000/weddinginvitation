@@ -109,7 +109,7 @@ export default function SuperAdminPage() {
   };
 
   const handleToggleStatus = (idValue: string) => {
-    const next = invites.map((item) => {
+    const next: ManagedInvitation[] = invites.map((item) => {
       if (item.id !== idValue) {
         return item;
       }
@@ -117,7 +117,7 @@ export default function SuperAdminPage() {
       const expired = item.status === "active";
       return {
         ...item,
-        status: expired ? "expired" : "active",
+        status: expired ? ("expired" as const) : ("active" as const),
         updatedAt: new Date().toISOString(),
         expiredAt: expired ? new Date().toISOString() : null,
       };

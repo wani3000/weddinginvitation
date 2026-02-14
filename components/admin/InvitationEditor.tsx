@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { DEFAULT_INVITATIONS, STORAGE_KEY } from "@/lib/admin/localStore";
+import { DEFAULT_INVITATIONS, parseInvitations, STORAGE_KEY } from "@/lib/admin/localStore";
 import { ManagedInvitation } from "@/lib/admin/types";
 
 type InvitationEditorProps = {
@@ -19,14 +19,7 @@ function loadInvitations(): ManagedInvitation[] {
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return DEFAULT_INVITATIONS;
-    }
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) {
-      return DEFAULT_INVITATIONS;
-    }
-    return parsed as ManagedInvitation[];
+    return parseInvitations(raw);
   } catch {
     return DEFAULT_INVITATIONS;
   }
@@ -36,6 +29,9 @@ export function InvitationEditor({ title, description, backHref, backLabel }: In
   const [all, setAll] = useState<ManagedInvitation[]>(() => loadInvitations());
   const current = useMemo(() => all[0] ?? DEFAULT_INVITATIONS[0], [all]);
   const [form, setForm] = useState<ManagedInvitation>(current);
+  const heroType = form.heroType ?? "image";
+  const heroMobileSrc = form.heroMobileSrc ?? form.heroImageUrl ?? "";
+  const hasHeroImage = heroType === "image" && heroMobileSrc.trim().length > 0;
 
   const updateField = <K extends keyof ManagedInvitation>(key: K, value: ManagedInvitation[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -45,6 +41,10 @@ export function InvitationEditor({ title, description, backHref, backLabel }: In
     const next: ManagedInvitation[] = [
       {
         ...form,
+        heroType,
+        heroMobileSrc,
+        heroDesktopSrc: form.heroDesktopSrc ?? "",
+        heroImageUrl: form.heroImageUrl ?? "",
         publicPath: "/",
         updatedAt: new Date().toISOString(),
       },
@@ -62,6 +62,18 @@ export function InvitationEditor({ title, description, backHref, backLabel }: In
   const previewGroom = form.groomName || "신랑 이름";
   const previewBride = form.brideName || "신부 이름";
   const previewVenue = form.venue || "예식장 위치";
+
+  const onHeroImageUpload = (file: File | null) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        updateField("heroMobileSrc", reader.result);
+        updateField("heroImageUrl", reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <main className="min-h-screen bg-neutral-100 p-4 md:p-8">
@@ -129,6 +141,53 @@ export function InvitationEditor({ title, description, backHref, backLabel }: In
             </label>
           </div>
 
+          <div className="mt-6 rounded-xl border border-neutral-200 p-4">
+            <p className="text-sm font-semibold text-neutral-900">대표이미지 영역(히어로이미지)</p>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              <label className="text-sm text-neutral-700">
+                타입
+                <select
+                  value={heroType}
+                  onChange={(e) => updateField("heroType", e.target.value as "image" | "video")}
+                  className="mt-2 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+                >
+                  <option value="image">이미지</option>
+                  <option value="video">비디오</option>
+                </select>
+              </label>
+              <label className="text-sm text-neutral-700">
+                모바일 소스 경로
+                <input
+                  value={heroMobileSrc}
+                  onChange={(e) => updateField("heroMobileSrc", e.target.value)}
+                  placeholder="https://... 또는 data:image/..."
+                  className="mt-2 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+                />
+              </label>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <label className="rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700">
+                모바일 경로 이미지 업로드
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => onHeroImageUpload(e.target.files?.[0] ?? null)}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  updateField("heroMobileSrc", "");
+                  updateField("heroImageUrl", "");
+                }}
+                className="rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium text-neutral-700"
+              >
+                이미지 삭제
+              </button>
+            </div>
+          </div>
+
           <div className="mt-6">
             <button
               onClick={save}
@@ -143,7 +202,23 @@ export function InvitationEditor({ title, description, backHref, backLabel }: In
           <p className="mb-3 text-sm font-medium text-neutral-700">모바일 실시간 미리보기 (iPhone급 비율)</p>
           <div className="mx-auto w-[393px] max-w-full rounded-[28px] border-8 border-neutral-900 bg-neutral-900 p-2">
             <div className="h-[852px] overflow-y-auto rounded-[20px] bg-white">
-              <div className="h-64 bg-neutral-200" />
+              <div className="relative h-64 overflow-hidden bg-neutral-700">
+                {hasHeroImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={heroMobileSrc} alt="대표 이미지 미리보기" className="h-full w-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 z-0 bg-neutral-700" />
+                )}
+                {!hasHeroImage ? (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center">
+                    <span className="text-3xl font-semibold text-neutral-300">첫번째 이미지</span>
+                  </div>
+                ) : null}
+                <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-8">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/icon/hero.test-02.svg" alt="" className="w-full max-w-[280px] opacity-90" />
+                </div>
+              </div>
               <div className="space-y-8 p-6">
                 <section>
                   <p className="text-xs text-neutral-500">WEDDING INVITATION</p>

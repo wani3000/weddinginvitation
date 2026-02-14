@@ -10,6 +10,10 @@ export const DEFAULT_INVITATIONS: ManagedInvitation[] = [
     ownerName: "박철완",
     ownerEmail: "owner@invite-chulwan-nara.com",
     title: "철완 ♥ 나라 결혼식",
+    heroType: "image",
+    heroMobileSrc: "",
+    heroDesktopSrc: "",
+    heroImageUrl: "",
     groomName: "철완",
     brideName: "나라",
     weddingDate: "2026-05-17 12:30",
@@ -40,6 +44,10 @@ export function parseInvitations(raw: string | null): ManagedInvitation[] {
         typeof item.ownerName === "string" &&
         typeof item.ownerEmail === "string" &&
         typeof item.title === "string" &&
+        (item.heroType === "image" || item.heroType === "video" || typeof item.heroType === "undefined") &&
+        (typeof item.heroMobileSrc === "string" || typeof item.heroMobileSrc === "undefined") &&
+        (typeof item.heroDesktopSrc === "string" || typeof item.heroDesktopSrc === "undefined") &&
+        (typeof item.heroImageUrl === "string" || typeof item.heroImageUrl === "undefined") &&
         typeof item.groomName === "string" &&
         typeof item.brideName === "string" &&
         typeof item.weddingDate === "string" &&

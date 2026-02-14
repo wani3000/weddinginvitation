@@ -5,6 +5,10 @@ export type ManagedInvitation = {
   ownerName: string;
   ownerEmail: string;
   title: string;
+  heroType?: "image" | "video";
+  heroMobileSrc?: string;
+  heroDesktopSrc?: string;
+  heroImageUrl?: string;
   groomName: string;
   brideName: string;
   weddingDate: string;

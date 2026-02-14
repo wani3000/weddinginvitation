@@ -143,24 +143,25 @@ export function Header() {
       alert("카카오 SDK가 초기화되지 않았습니다.");
       return;
     }
+    const siteUrl = window.location.origin || SITE_URL;
 
     window.Kakao.Share.sendDefault({
       objectType: "feed",
       content: {
         title: "박철완 ♥ 서나라 결혼합니다",
         description: "26년 5월 2일 토요일 오후 12시 30분\n노블발렌티 대치",
-        imageUrl: `${SITE_URL}/img/1200x630.png`,
+        imageUrl: `${siteUrl}/img/1200x630.png`,
         link: {
-          mobileWebUrl: SITE_URL,
-          webUrl: SITE_URL,
+          mobileWebUrl: siteUrl,
+          webUrl: siteUrl,
         },
       },
       buttons: [
         {
           title: "청첩장 보기",
           link: {
-            mobileWebUrl: SITE_URL,
-            webUrl: SITE_URL,
+            mobileWebUrl: siteUrl,
+            webUrl: siteUrl,
           },
         },
       ],
